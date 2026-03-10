@@ -1,32 +1,12 @@
-import express from 'express'
-import cors from 'cors'
-import 'dotenv/config'
+import 'dotenv/config'; 
+import app from "./app.js";
+import connectDB from "./config/db.js";
 
 
-import connectDB from './config/mongodb.js'
+const PORT = process.env.PORT || 5000;
 
+connectDB();
 
-// ---------------- APP CONFIG ----------------
-const app = express()
-const port = process.env.PORT || 5000
-
-connectDB()
-
-
-// ---------------- MIDDLEWARE ----------------
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
-app.use(express.text({ type: 'text/plain' }))
-app.use(cors())
-
-
-
-// ---------------- HEALTH CHECK ----------------
-app.get('/', (req, res) => {
-  res.send('API Working')
-})
-
-// ---------------- START SERVER ----------------
-app.listen(port, () => {
-  console.log(`Server started on PORT : ${port}`)
-})
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
