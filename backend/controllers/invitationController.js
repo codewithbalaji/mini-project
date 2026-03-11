@@ -4,7 +4,20 @@ import Invitation from "../models/Invitation.js";
 import Organization from "../models/Organization.js";
 import inviteTemplate from "../mail/templates/inviteTemplate.js";
 import { sendEmail } from "../mail/sendEmail.js";
+import generateToken from "../utils/generateToken.js";
 import crypto from "crypto";
+
+export const getInvitations = async (req, res) => {
+  try {
+    const invitations = await Invitation.find({
+      organizationId: req.user.organizationId,
+    }).sort({ createdAt: -1 });
+
+    res.json(invitations);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
 export const inviteUser = async (req, res) => {
   try {
@@ -99,9 +112,12 @@ export const acceptInvite = async (req, res) => {
     invitation.status = "ACCEPTED";
     await invitation.save();
 
+    const authToken = generateToken(user);
+
     res.json({
       message: "Account created successfully",
-      user
+      user,
+      token: authToken
     });
 
   } catch (error) {

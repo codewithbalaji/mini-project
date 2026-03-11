@@ -12,7 +12,6 @@ const router = express.Router();
 router.get(
   "/",
   authMiddleware,
-  allowRoles("ADMIN"),
   getOrganization
 );
 
