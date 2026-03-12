@@ -41,7 +41,15 @@ export default function LoginPage() {
       navigate("/dashboard");
     },
     onError: (err: any) => {
-      toast.error(err?.response?.data?.message ?? "Login failed");
+      const data = err?.response?.data;
+      if (err?.response?.status === 403 && data?.userId) {
+        toast.info(data.message);
+        navigate("/verify-email", {
+          state: { userId: data.userId, email: data.email },
+        });
+        return;
+      }
+      toast.error(data?.message ?? "Login failed");
     },
   });
 
@@ -74,7 +82,15 @@ export default function LoginPage() {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Password</FormLabel>
+                <div className="flex items-center justify-between">
+                  <FormLabel>Password</FormLabel>
+                  <Link
+                    to="/forgot-password"
+                    className="text-xs text-indigo-500 hover:underline"
+                  >
+                    Forgot password?
+                  </Link>
+                </div>
                 <FormControl>
                   <Input type="password" placeholder="••••••••" {...field} />
                 </FormControl>

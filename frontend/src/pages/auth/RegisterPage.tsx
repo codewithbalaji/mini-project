@@ -16,7 +16,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { authService } from "@/services/authService";
-import { useAuth } from "@/hooks/useAuth";
 
 const schema = z
   .object({
@@ -35,7 +34,6 @@ type FormData = z.infer<typeof schema>;
 
 export default function RegisterPage() {
   const navigate = useNavigate();
-  const { setAuth } = useAuth();
 
   const form = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -56,9 +54,10 @@ export default function RegisterPage() {
         password: data.password,
         organizationName: data.organizationName,
       }),
-    onSuccess: ({ user, token }) => {
-      setAuth(user, token);
-      navigate("/dashboard");
+    onSuccess: (data) => {
+      navigate("/verify-email", {
+        state: { userId: data.userId, email: data.email },
+      });
     },
     onError: (err: any) => {
       toast.error(err?.response?.data?.message ?? "Registration failed");

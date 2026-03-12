@@ -12,6 +12,12 @@ export interface RegisterPayload {
   organizationName: string;
 }
 
+export interface RegisterResponse {
+  userId: string;
+  email: string;
+  message: string;
+}
+
 export interface AuthResponse {
   user: User;
   token: string;
@@ -19,5 +25,22 @@ export interface AuthResponse {
 
 export interface AcceptInvitationPayload {
   name: string;
+  password: string;
+}
+
+export interface VerifyEmailPayload {
+  userId: string;
+  otp: string;
+}
+
+export interface ResendOtpPayload {
+  userId: string;
+}
+
+export interface ForgotPasswordPayload {
+  email: string;
+}
+
+export interface ResetPasswordPayload {
   password: string;
 }

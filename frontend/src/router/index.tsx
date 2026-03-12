@@ -8,6 +8,9 @@ import RoleGuard from "@/components/shared/RoleGuard";
 import LoginPage from "@/pages/auth/LoginPage";
 import RegisterPage from "@/pages/auth/RegisterPage";
 import AcceptInvitationPage from "@/pages/auth/AcceptInvitationPage";
+import VerifyEmailPage from "@/pages/auth/VerifyEmailPage";
+import ForgotPasswordPage from "@/pages/auth/ForgotPasswordPage";
+import ResetPasswordPage from "@/pages/auth/ResetPasswordPage";
 import DashboardPage from "@/pages/dashboard/DashboardPage";
 import UsersPage from "@/pages/users/UsersPage";
 import DepartmentsPage from "@/pages/departments/DepartmentsPage";
@@ -22,6 +25,9 @@ export const router = createBrowserRouter([
     children: [
       { path: "/login", element: <LoginPage /> },
       { path: "/register", element: <RegisterPage /> },
+      { path: "/verify-email", element: <VerifyEmailPage /> },
+      { path: "/forgot-password", element: <ForgotPasswordPage /> },
+      { path: "/reset-password/:token", element: <ResetPasswordPage /> },
     ],
   },
   // Public invite accept (no auth required — user has no token yet)

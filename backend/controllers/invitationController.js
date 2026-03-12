@@ -50,7 +50,8 @@ export const inviteUser = async (req, res) => {
 
     const html = inviteTemplate({
       inviteLink,
-      organizationName: organization.name
+      organizationName: organization.name,
+      role: invitation.role
     });
 
     await sendEmail({
@@ -106,7 +107,8 @@ export const acceptInvite = async (req, res) => {
       password: hashedPassword,
       role: invitation.role,
       organizationId: invitation.organizationId,
-      departmentId: invitation.departmentId
+      departmentId: invitation.departmentId,
+      isEmailVerified: true
     });
 
     invitation.status = "ACCEPTED";

@@ -25,7 +25,17 @@ const userSchema = new mongoose.Schema(
     departmentId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Department"
-    }
+    },
+
+    isEmailVerified: {
+      type: Boolean,
+      default: false
+    },
+
+    emailOtp: String,
+    emailOtpExpiry: Date,
+    passwordResetToken: String,
+    passwordResetExpiry: Date
   },
   { timestamps: true }
 );
