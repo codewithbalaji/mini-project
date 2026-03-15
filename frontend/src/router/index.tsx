@@ -12,11 +12,26 @@ import VerifyEmailPage from "@/pages/auth/VerifyEmailPage";
 import ForgotPasswordPage from "@/pages/auth/ForgotPasswordPage";
 import ResetPasswordPage from "@/pages/auth/ResetPasswordPage";
 import DashboardPage from "@/pages/dashboard/DashboardPage";
+import AnalyticsDashboardPage from "@/pages/dashboard/AnalyticsDashboardPage";
 import UsersPage from "@/pages/users/UsersPage";
 import DepartmentsPage from "@/pages/departments/DepartmentsPage";
 import InvitationsPage from "@/pages/invitations/InvitationsPage";
 import OrganizationSettingsPage from "@/pages/organization/OrganizationSettingsPage";
 import NotFoundPage from "@/pages/NotFoundPage";
+
+// Phase 2 — Projects
+import ProjectsPage from "@/pages/projects/ProjectsPage";
+import ProjectDetailPage from "@/pages/projects/ProjectDetailPage";
+import CreateProjectPage from "@/pages/projects/CreateProjectPage";
+import EditProjectPage from "@/pages/projects/EditProjectPage";
+
+// Phase 2 — Tasks
+import TasksPage from "@/pages/tasks/TasksPage";
+import TaskDetailPage from "@/pages/tasks/TaskDetailPage";
+import MyTasksPage from "@/pages/tasks/MyTasksPage";
+
+// Phase 2 — Notifications
+import NotificationsPage from "@/pages/notifications/NotificationsPage";
 
 export const router = createBrowserRouter([
   // Public auth routes
@@ -44,6 +59,16 @@ export const router = createBrowserRouter([
         children: [
           { path: "/", element: <Navigate to="/dashboard" replace /> },
           { path: "/dashboard", element: <DashboardPage /> },
+          {
+            path: "/analytics",
+            element: (
+              <RoleGuard roles={["ADMIN", "MANAGER"]}>
+                <AnalyticsDashboardPage />
+              </RoleGuard>
+            ),
+          },
+
+          // ── Phase 1 routes ─────────────────────────────────────────────
           {
             path: "/users",
             element: (
@@ -76,6 +101,41 @@ export const router = createBrowserRouter([
               </RoleGuard>
             ),
           },
+
+          // ── Phase 2 — Projects ─────────────────────────────────────────
+          { path: "/projects", element: <ProjectsPage /> },
+          {
+            path: "/projects/create",
+            element: (
+              <RoleGuard roles={["ADMIN", "MANAGER"]}>
+                <CreateProjectPage />
+              </RoleGuard>
+            ),
+          },
+          { path: "/projects/:id", element: <ProjectDetailPage /> },
+          {
+            path: "/projects/:id/edit",
+            element: (
+              <RoleGuard roles={["ADMIN", "MANAGER"]}>
+                <EditProjectPage />
+              </RoleGuard>
+            ),
+          },
+          { path: "/projects/:id/tasks", element: <TasksPage /> },
+
+          // ── Phase 2 — Tasks ────────────────────────────────────────────
+          { path: "/tasks/:id", element: <TaskDetailPage /> },
+          {
+            path: "/tasks/my-tasks",
+            element: (
+              <RoleGuard roles={["ADMIN", "MANAGER", "EMPLOYEE"]}>
+                <MyTasksPage />
+              </RoleGuard>
+            ),
+          },
+
+          // ── Phase 2 — Notifications ────────────────────────────────────
+          { path: "/notifications", element: <NotificationsPage /> },
         ],
       },
     ],

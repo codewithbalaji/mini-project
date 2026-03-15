@@ -58,7 +58,7 @@ export default function UsersPage() {
 
   const { data: users, isLoading } = useQuery({
     queryKey: ["users"],
-    queryFn: userService.getUsers,
+    queryFn: () => userService.getUsers() as Promise<User[]>,
   });
 
   const roleMutation = useMutation({

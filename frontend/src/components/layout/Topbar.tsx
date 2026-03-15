@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { LogOut, ChevronDown } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import NotificationBell from "@/components/shared/NotificationBell";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -39,8 +40,12 @@ export default function Topbar() {
         {org?.name ?? "Loading..."}
       </div>
 
-      {/* User menu */}
-      <DropdownMenu>
+      {/* Right side — notifications + user menu */}
+      <div className="flex items-center gap-3">
+        <NotificationBell />
+
+        {/* User menu */}
+        <DropdownMenu>
         <DropdownMenuTrigger className="flex items-center gap-2 outline-none cursor-pointer">
           <Avatar className="h-8 w-8">
             <AvatarFallback className="bg-indigo-600 text-white text-xs font-bold">
@@ -68,6 +73,7 @@ export default function Topbar() {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+      </div>
     </header>
   );
 }

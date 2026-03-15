@@ -1,0 +1,30 @@
+src/pages/projects/components/ProjectCard.tsx(2,20): error TS6133: 'Users' is declared but its value is never read.
+src/pages/projects/EditProjectPage.tsx(36,11): error TS2322: Type 'Project' is not assignable to type 'Partial<CreateProjectPayload>'.
+  Types of property 'managerId' are incompatible.
+    Type 'string | User | undefined' is not assignable to type 'string | undefined'.
+      Type 'User' is not assignable to type 'string'.
+src/pages/users/UsersPage.tsx(61,5): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(options: DefinedInitialDataOptions<unknown, Error, unknown, string[]>, queryClient?: QueryClient | undefined): DefinedUseQueryResult<unknown, Error>', gave the following error.
+    Type '(params?: { departmentId?: string; }) => Promise<User[]>' is not assignable to type 'QueryFunction<unknown, string[]>'.
+      Types of parameters 'params' and 'context' are incompatible.
+        Type '{ client: QueryClient; queryKey: string[]; signal: AbortSignal; meta: Record<string, unknown> | undefined; pageParam?: unknown; direction?: unknown; }' has no properties in common with type '{ departmentId?: string | undefined; }'.
+  Overload 2 of 3, '(options: UndefinedInitialDataOptions<User[], Error, User[], string[]>, queryClient?: QueryClient | undefined): UseQueryResult<...>', gave the following error.
+    Type '(params?: { departmentId?: string; }) => Promise<User[]>' is not assignable to type 'unique symbol | QueryFunction<User[], string[], never> | undefined'.
+      Type '(params?: { departmentId?: string; }) => Promise<User[]>' is not assignable to type 'QueryFunction<User[], string[], never>'.
+        Types of parameters 'params' and 'context' are incompatible.
+          Type '{ client: QueryClient; queryKey: string[]; signal: AbortSignal; meta: Record<string, unknown> | undefined; pageParam?: unknown; direction?: unknown; }' has no properties in common with type '{ departmentId?: string | undefined; }'.
+  Overload 3 of 3, '(options: UseQueryOptions<User[], Error, User[], string[]>, queryClient?: QueryClient | undefined): UseQueryResult<User[], Error>', gave the following error.
+    Type '(params?: { departmentId?: string; }) => Promise<User[]>' is not assignable to type 'unique symbol | QueryFunction<User[], string[], never> | undefined'.
+      Type '(params?: { departmentId?: string; }) => Promise<User[]>' is not assignable to type 'QueryFunction<User[], string[], never>'.
+        Types of parameters 'params' and 'context' are incompatible.
+          Type '{ client: QueryClient; queryKey: string[]; signal: AbortSignal; meta: Record<string, unknown> | undefined; pageParam?: unknown; direction?: unknown; }' has no properties in common with type '{ departmentId?: string | undefined; }'.
+src/pages/users/UsersPage.tsx(112,24): error TS2339: Property 'map' does not exist on type '{}'.
+src/pages/users/UsersPage.tsx(112,29): error TS7006: Parameter 'user' implicitly has an 'any' type.
+src/pages/users/UsersPage.tsx(119,36): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type 'Record<Role, string>'.
+src/services/dashboardService.ts(5,23): error TS2304: Cannot find name 'api'.
+src/services/dashboardService.ts(10,23): error TS2304: Cannot find name 'api'.
+src/services/dashboardService.ts(15,23): error TS2304: Cannot find name 'api'.
+src/services/dashboardService.ts(20,23): error TS2304: Cannot find name 'api'.
+src/services/taskService.ts(2,33): error TS6196: 'Comment' is declared but never used.
+src/store/projectStore.ts(24,59): error TS6133: 'get' is declared but its value is never read.
+src/store/taskStore.ts(27,53): error TS6133: 'get' is declared but its value is never read.

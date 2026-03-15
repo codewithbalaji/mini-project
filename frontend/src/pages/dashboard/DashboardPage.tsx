@@ -8,6 +8,7 @@ import { usePermissions } from "@/hooks/usePermissions";
 import { userService } from "@/services/userService";
 import { departmentService } from "@/services/departmentService";
 import { invitationService } from "@/services/invitationService";
+import type { User } from "@/types/user.types";
 
 export default function DashboardPage() {
   const { user } = useAuth();
@@ -15,7 +16,7 @@ export default function DashboardPage() {
 
   const { data: users, isLoading: loadingUsers } = useQuery({
     queryKey: ["users"],
-    queryFn: userService.getUsers,
+    queryFn: () => userService.getUsers() as Promise<User[]>,
     enabled: isAdmin,
   });
 
@@ -44,7 +45,7 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <StatCard
             title="Total Members"
-            value={users?.length ?? 0}
+            value={Array.isArray(users) ? users.length : 0}
             icon={<Users className="text-indigo-500" size={20} />}
             loading={loadingUsers}
           />

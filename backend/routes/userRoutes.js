@@ -10,7 +10,8 @@ import allowRoles from "../middleware/roleMiddleware.js";
 
 const router = express.Router();
 
-router.get("/", authMiddleware, allowRoles("ADMIN"), getUsers);
+router.get("/", authMiddleware, allowRoles("ADMIN", "MANAGER"), getUsers);
+
 
 router.put(
   "/:id/role",
