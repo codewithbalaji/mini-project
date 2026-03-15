@@ -7,7 +7,7 @@ export interface User {
   email: string;
   role: Role;
   organizationId: string;
-  departmentId?: string;
+  departmentId?: string | { _id: string; name: string };
   isActive?: boolean;
   createdAt: string;
   updatedAt: string;

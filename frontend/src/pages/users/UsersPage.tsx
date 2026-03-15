@@ -38,8 +38,10 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import PageHeader from "@/components/shared/PageHeader";
 import { userService } from "@/services/userService";
+import { departmentService } from "@/services/departmentService";
 import { useAuth } from "@/hooks/useAuth";
 import type { User, Role } from "@/types/user.types";
+import type { Department } from "@/types/department.types";
 
 const ROLE_COLORS: Record<Role, string> = {
   ADMIN: "bg-red-100 text-red-700 border-red-200",
@@ -54,11 +56,18 @@ export default function UsersPage() {
 
   const [roleTarget, setRoleTarget] = useState<User | null>(null);
   const [selectedRole, setSelectedRole] = useState<Role>("EMPLOYEE");
+  const [deptTarget, setDeptTarget] = useState<User | null>(null);
+  const [selectedDeptId, setSelectedDeptId] = useState<string>("none");
   const [deactivateTarget, setDeactivateTarget] = useState<User | null>(null);
 
   const { data: users, isLoading } = useQuery({
     queryKey: ["users"],
     queryFn: () => userService.getUsers() as Promise<User[]>,
+  });
+
+  const { data: departments } = useQuery({
+    queryKey: ["departments"],
+    queryFn: departmentService.getDepartments,
   });
 
   const roleMutation = useMutation({
@@ -70,6 +79,17 @@ export default function UsersPage() {
       setRoleTarget(null);
     },
     onError: (err: any) => toast.error(err?.response?.data?.message ?? "Failed to update role"),
+  });
+
+  const deptMutation = useMutation({
+    mutationFn: ({ id, departmentId }: { id: string; departmentId: string }) =>
+      userService.updateUserDepartment(id, departmentId === "none" ? null : departmentId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+      toast.success("Department updated successfully");
+      setDeptTarget(null);
+    },
+    onError: (err: any) => toast.error(err?.response?.data?.message ?? "Failed to update department"),
   });
 
   const deactivateMutation = useMutation({
@@ -122,7 +142,9 @@ export default function UsersPage() {
                       </Badge>
                     </TableCell>
                     <TableCell className="text-muted-foreground text-sm">
-                      {user.departmentId ?? "—"}
+                      {user.departmentId 
+                        ? (typeof user.departmentId === 'string' ? user.departmentId : user.departmentId.name) 
+                        : "—"}
                     </TableCell>
                     <TableCell className="text-muted-foreground text-sm">
                       {new Date(user.createdAt).toLocaleDateString()}
@@ -143,6 +165,14 @@ export default function UsersPage() {
                               }}
                             >
                               Change Role
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() => {
+                                setDeptTarget(user);
+                                setSelectedDeptId(typeof user.departmentId === 'object' ? user.departmentId?._id : (user.departmentId || "none"));
+                              }}
+                            >
+                              Change Department
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem
@@ -194,6 +224,46 @@ export default function UsersPage() {
               disabled={roleMutation.isPending}
             >
               {roleMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Save
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Change Department Dialog */}
+      <Dialog open={!!deptTarget} onOpenChange={() => setDeptTarget(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Change Department</DialogTitle>
+            <DialogDescription>
+              Update department for <strong>{deptTarget?.name}</strong>
+            </DialogDescription>
+          </DialogHeader>
+          <Select
+            value={selectedDeptId}
+            onValueChange={(v) => setSelectedDeptId(v)}
+          >
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="none">No Department</SelectItem>
+              {departments?.map((d: Department) => (
+                <SelectItem key={d._id} value={d._id}>{d.name}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeptTarget(null)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={() =>
+                deptMutation.mutate({ id: deptTarget!._id, departmentId: selectedDeptId })
+              }
+              disabled={deptMutation.isPending}
+            >
+              {deptMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Save
             </Button>
           </DialogFooter>

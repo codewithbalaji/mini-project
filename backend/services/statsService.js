@@ -132,6 +132,9 @@ const getAnalyticsDashboardStats = async (organizationId, departmentId = null) =
   const activeStatuses = ["PLANNING", "ACTIVE", "ON_HOLD"];
   const totalActiveProjects = projects.filter(p => activeStatuses.includes(p.status)).length;
   const totalTasks = tasks.length;
+  const doneTasks = tasks.filter(t => t.status === "DONE").length;
+  const taskCompletionRate = totalTasks > 0 ? Math.round((doneTasks / totalTasks) * 100) : 0;
+  const overdueTasks = tasks.filter(t => t.dueDate && t.dueDate < new Date() && t.status !== "DONE").length;
   
   // Unique Members
   const memberSet = new Set();
@@ -199,6 +202,8 @@ const getAnalyticsDashboardStats = async (organizationId, departmentId = null) =
     kpis: {
       totalActiveProjects,
       totalTasks,
+      taskCompletionRate,
+      overdueTasks,
       totalMembers,
       totalBudget,
       totalEstimatedHours

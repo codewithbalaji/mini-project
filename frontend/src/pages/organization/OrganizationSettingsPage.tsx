@@ -25,6 +25,7 @@ import { organizationService } from "@/services/organizationService";
 const schema = z.object({
   name: z.string().min(2, "Organization name must be at least 2 characters"),
   industry: z.string().optional(),
+  currencySymbol: z.string().max(5).optional(),
 });
 type FormData = z.infer<typeof schema>;
 
@@ -38,13 +39,13 @@ export default function OrganizationSettingsPage() {
 
   const form = useForm<FormData>({
     resolver: zodResolver(schema),
-    defaultValues: { name: "", industry: "" },
+    defaultValues: { name: "", industry: "", currencySymbol: "$" },
   });
 
   // Pre-fill form when data loads
   useEffect(() => {
     if (org) {
-      form.reset({ name: org.name, industry: org.industry ?? "" });
+      form.reset({ name: org.name, industry: org.industry ?? "", currencySymbol: org.currencySymbol ?? "$" });
     }
   }, [org, form]);
 
@@ -107,6 +108,20 @@ export default function OrganizationSettingsPage() {
                         <Input placeholder="e.g. Technology, Healthcare" {...field} />
                       </FormControl>
                       <FormDescription>Optional. Helps categorize your workspace.</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="currencySymbol"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Currency Symbol</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g. $, ₹, €" {...field} />
+                      </FormControl>
+                      <FormDescription>Used globally across financial metrics.</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}

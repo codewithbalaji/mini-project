@@ -21,6 +21,8 @@ export interface MyDashboard {
 export interface AnalyticsKPIs {
   totalActiveProjects: number;
   totalTasks: number;
+  taskCompletionRate: number;
+  overdueTasks: number;
   totalMembers: number;
   totalBudget: number;
   totalEstimatedHours: number;

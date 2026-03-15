@@ -57,7 +57,7 @@ const phase2Items: NavItem[] = [
     label: "My Tasks",
     to: "/tasks/my-tasks",
     icon: <CheckSquare size={18} />,
-    roles: ["ADMIN", "MANAGER", "EMPLOYEE"],
+    roles: ["EMPLOYEE"],
   },
   {
     label: "Notifications",

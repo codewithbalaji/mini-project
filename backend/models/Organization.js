@@ -9,6 +9,11 @@ const organizationSchema = new mongoose.Schema(
 
     industry: String,
 
+    currencySymbol: {
+      type: String,
+      default: '$'
+    },
+
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User"

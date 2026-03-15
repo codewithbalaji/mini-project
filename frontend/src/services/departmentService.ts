@@ -1,5 +1,5 @@
 import api from "./api";
-import type { Department, CreateDepartmentPayload } from "@/types/department.types";
+import type { Department, CreateDepartmentPayload, UpdateDepartmentPayload } from "@/types/department.types";
 
 export const departmentService = {
   getDepartments: () =>
@@ -7,4 +7,7 @@ export const departmentService = {
 
   createDepartment: (data: CreateDepartmentPayload) =>
     api.post<Department>("/departments", data).then((r) => r.data),
+
+  updateDepartment: (id: string, data: UpdateDepartmentPayload) =>
+    api.put<Department>(`/departments/${id}`, data).then((r) => r.data),
 };

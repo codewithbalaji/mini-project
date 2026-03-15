@@ -22,8 +22,25 @@ export const getUsers = async (req, res) => {
       query.departmentId = queryDeptId;
     }
 
-    const users = await User.find(query).select("-password");
+    const users = await User.find(query)
+      .select("-password")
+      .populate("departmentId", "name");
     res.json(users);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Update user department (Admin only)
+export const updateUserDepartment = async (req, res) => {
+  try {
+    const { departmentId } = req.body;
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      { departmentId },
+      { new: true }
+    ).populate("departmentId", "name");
+    res.json(user);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

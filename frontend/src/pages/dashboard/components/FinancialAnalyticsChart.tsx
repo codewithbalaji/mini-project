@@ -4,15 +4,16 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 interface Props {
   totalBudget: number;
   totalEstimatedHours: number;
+  currencySymbol: string;
 }
 
-export const FinancialAnalyticsChart = ({ totalBudget, totalEstimatedHours }: Props) => {
-  // Mock an estimated cost based on hours * $50 avg hourly rate
+export const FinancialAnalyticsChart = ({ totalBudget, totalEstimatedHours, currencySymbol }: Props) => {
+  // Mock an estimated cost based on hours * avg hourly rate (e.g. 50)
   const estimatedCost = totalEstimatedHours * 50;
   
   const data = [
     { name: "Total Budget", value: totalBudget, fill: "#10b981" },
-    { name: "Est. Cost (Hrs × $50)", value: estimatedCost, fill: "#f59e0b" }
+    { name: `Est. Cost (Hrs × ${currencySymbol}50)`, value: estimatedCost, fill: "#f59e0b" }
   ];
 
   return (
@@ -31,7 +32,7 @@ export const FinancialAnalyticsChart = ({ totalBudget, totalEstimatedHours }: Pr
                 axisLine={false} 
                 tickLine={false} 
                 tick={{ fill: "#64748b", fontSize: 12 }} 
-                tickFormatter={(val) => "$" + val}
+                tickFormatter={(val) => currencySymbol + val}
               />
               <YAxis 
                 dataKey="name" 
@@ -43,7 +44,7 @@ export const FinancialAnalyticsChart = ({ totalBudget, totalEstimatedHours }: Pr
               />
               <Tooltip
                 cursor={{ fill: "#f1f5f9" }}
-                formatter={(value: any) => ["$" + value.toLocaleString(), "Amount"] as any}
+                formatter={(value: any) => [currencySymbol + value.toLocaleString(), "Amount"] as any}
                 contentStyle={{ borderRadius: "8px", border: "1px solid #e2e8f0" }}
               />
               <Bar 

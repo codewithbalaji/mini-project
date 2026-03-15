@@ -2,6 +2,7 @@ import express from "express";
 import {
   getUsers,
   updateUserRole,
+  updateUserDepartment,
   deactivateUser
 } from "../controllers/userController.js";
 
@@ -12,12 +13,18 @@ const router = express.Router();
 
 router.get("/", authMiddleware, allowRoles("ADMIN", "MANAGER"), getUsers);
 
-
 router.put(
   "/:id/role",
   authMiddleware,
   allowRoles("ADMIN"),
   updateUserRole
+);
+
+router.put(
+  "/:id/department",
+  authMiddleware,
+  allowRoles("ADMIN"),
+  updateUserDepartment
 );
 
 router.delete(
