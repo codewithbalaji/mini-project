@@ -8,6 +8,7 @@ import { useTaskStore } from "@/store/taskStore";
 import PageHeader from "@/components/shared/PageHeader";
 import StatusBadge from "@/components/shared/StatusBadge";
 import PriorityBadge from "@/components/shared/PriorityBadge";
+import AICopilotModal from "@/components/ai/AICopilotModal";
 import type { Project } from "@/types/project.types";
 
 const MyTasksPage = () => {
@@ -24,10 +25,13 @@ const MyTasksPage = () => {
 
   return (
     <div className="p-6 space-y-6">
-      <PageHeader
-        title="My Tasks"
-        description={`${activeTasks.length} active · ${overdueTasks.length} overdue · ${doneTasks.length} completed`}
-      />
+      <div className="flex justify-between items-start">
+        <PageHeader
+          title="My Tasks"
+          description={`${activeTasks.length} active · ${overdueTasks.length} overdue · ${doneTasks.length} completed`}
+        />
+        <AICopilotModal contextType="MY_TASKS" />
+      </div>
 
       {/* Summary cards */}
       <div className="grid grid-cols-3 gap-4">

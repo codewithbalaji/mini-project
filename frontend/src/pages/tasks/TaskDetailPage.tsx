@@ -13,6 +13,7 @@ import UserAvatar from "@/components/shared/UserAvatar";
 import TaskUpdateForm from "./components/TaskUpdateForm";
 import TaskUpdateList from "./components/TaskUpdateList";
 import CommentSection from "./components/CommentSection";
+import AICopilotModal from "@/components/ai/AICopilotModal";
 import type { User } from "@/types/user.types";
 import type { TaskStatus } from "@/types/task.types";
 
@@ -67,10 +68,15 @@ const TaskDetailPage = () => {
 
       {/* Header */}
       <div>
-        <h1 className="text-xl font-bold">{selectedTask.title}</h1>
-        {selectedTask.description && (
-          <p className="text-muted-foreground text-sm mt-1">{selectedTask.description}</p>
-        )}
+        <div className="flex justify-between items-start">
+          <div>
+            <h1 className="text-xl font-bold">{selectedTask.title}</h1>
+            {selectedTask.description && (
+              <p className="text-muted-foreground text-sm mt-1">{selectedTask.description}</p>
+            )}
+          </div>
+          <AICopilotModal contextType="TASK_DETAIL" />
+        </div>
         <div className="flex flex-wrap gap-2 mt-3">
           <StatusBadge status={selectedTask.status} />
           <PriorityBadge priority={selectedTask.priority} />
