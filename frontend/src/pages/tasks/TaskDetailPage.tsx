@@ -14,6 +14,7 @@ import TaskUpdateForm from "./components/TaskUpdateForm";
 import TaskUpdateList from "./components/TaskUpdateList";
 import CommentSection from "./components/CommentSection";
 import AICopilotModal from "@/components/ai/AICopilotModal";
+import TaskInsights from "./components/TaskInsights";
 import type { User } from "@/types/user.types";
 import type { TaskStatus } from "@/types/task.types";
 
@@ -148,18 +149,8 @@ const TaskDetailPage = () => {
         </Card>
       )}
 
-      {/* Phase 3 AI placeholder */}
-      <Card className="border-violet-200 bg-violet-50/50 dark:bg-violet-950/20">
-        <CardContent className="pt-4 flex items-center justify-between">
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-violet-700 dark:text-violet-300">🤖 AI Insights</span>
-              <Badge variant="secondary" className="text-[10px] bg-violet-100 text-violet-700">Coming in Phase 3</Badge>
-            </div>
-            <p className="text-xs text-muted-foreground mt-1">AI-powered task analysis will appear here.</p>
-          </div>
-        </CardContent>
-      </Card>
+      {/* AI Insights */}
+      <TaskInsights task={selectedTask} updates={taskUpdates} />
 
       {/* Tabs */}
       <div className="border-b">

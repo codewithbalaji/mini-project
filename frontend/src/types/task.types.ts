@@ -71,3 +71,14 @@ export interface SubmitUpdatePayload {
   hoursLogged?: number;
   statusChange?: TaskStatus | null;
 }
+
+export interface TaskInsightRecommendation {
+  type: "status" | "priority" | "time" | "action";
+  title: string;
+  description: string;
+  severity: "info" | "warning" | "critical";
+}
+
+export interface TaskInsights {
+  recommendations: TaskInsightRecommendation[];
+}
