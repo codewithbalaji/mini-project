@@ -85,7 +85,7 @@ export default function Sidebar() {
       {/* Logo */}
       <div className="flex items-center gap-3 px-6 h-16 border-b border-zinc-800">
         <BrainCircuit className="h-6 w-6 text-indigo-400" />
-        <span className="text-base font-bold tracking-tight">ProjectAI</span>
+        <span className="text-base font-bold tracking-tight">Opervox</span>
       </div>
 
       {/* Nav */}

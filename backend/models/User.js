@@ -19,12 +19,14 @@ const userSchema = new mongoose.Schema(
 
     organizationId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Organization"
+      ref: "Organization",
+      index: true
     },
 
     departmentId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Department"
+      ref: "Department",
+      index: true
     },
 
     isEmailVerified: {

@@ -2,104 +2,143 @@
 
 ## Monorepo Layout
 
+The project uses a monorepo structure with separate frontend and backend directories at the root level.
+
 ```
 /
-├── backend/          # Node.js Express API
-└── frontend/         # React TypeScript SPA
+├── backend/          # Node.js/Express API server
+├── frontend/         # React/TypeScript client
+└── .kiro/           # Kiro configuration and steering
 ```
 
-## Backend Structure (`/backend`)
+## Backend Structure
 
 ```
 backend/
-├── config/           # Database connection configuration
-├── constants/        # Shared constants (e.g., roles.js)
-├── controllers/      # Request handlers for each domain
-├── cron/            # Scheduled jobs (task email reminders)
-├── mail/            # Email service and templates
-│   └── templates/   # HTML email templates
-├── middleware/      # Auth, role-based access, ownership checks
-├── models/          # Mongoose schemas (User, Project, Task, etc.)
-├── routes/          # Express route definitions
-├── services/        # Business logic (notifications, stats)
-├── utils/           # Helper functions (JWT generation)
-├── app.js           # Express app setup and route mounting
-└── server.js        # Entry point (DB connection, server start)
+├── config/          # Database and configuration setup
+├── constants/       # Shared constants (roles, enums)
+├── controllers/     # Request handlers for each domain
+├── cron/           # Scheduled jobs (email reminders, alerts)
+├── mail/           # Email service and templates
+│   └── templates/  # HTML email templates
+├── middleware/     # Auth, role-based access, ownership checks
+├── models/         # Mongoose schemas
+├── routes/         # Express route definitions
+├── services/       # Business logic layer (AI, notifications, stats)
+├── utils/          # Helper functions (token generation, etc.)
+├── app.js          # Express app configuration
+├── server.js       # Server entry point
+└── seed.js         # Database seeding script
 ```
 
 ### Backend Conventions
 
-- **ES Modules**: Use `import/export` syntax
-- **Route Organization**: Routes grouped by domain (auth, projects, tasks, etc.)
-- **Middleware Chain**: `authMiddleware` → `roleMiddleware` → `ownershipMiddleware`
-- **Multi-tenancy**: All queries must filter by `organizationId`
-- **Model Indexes**: Critical fields indexed for performance (organizationId, status, assignedTo)
+- **Models**: Mongoose schemas with multi-tenant `organizationId` field for data isolation
+- **Controllers**: Handle HTTP requests, call services, return responses
+- **Services**: Contain business logic, reusable across controllers
+- **Routes**: Organized by domain (auth, users, projects, tasks, etc.)
+- **Middleware**: `authMiddleware` for JWT validation, `roleMiddleware` for RBAC, `ownershipMiddleware` for resource access control
 
-## Frontend Structure (`/frontend`)
+### Key Backend Files
+
+- `app.js`: Express app setup with CORS and route mounting
+- `server.js`: Server initialization, DB connection, cron job setup
+- `config/db.js`: MongoDB connection configuration
+- `constants/roles.js`: Role definitions (ADMIN, MANAGER, EMPLOYEE, VIEWER)
+
+## Frontend Structure
 
 ```
-frontend/src/
-├── assets/          # Static assets (images, icons)
-├── components/
-│   ├── layout/      # DashboardLayout, AuthLayout
-│   ├── shared/      # Reusable components (ProtectedRoute, RoleGuard, badges)
-│   └── ui/          # shadcn/ui primitives (button, card, dialog, etc.)
-├── hooks/           # Custom React hooks (useAuth, useTasks, useProjects)
-├── lib/             # Utility functions (cn for className merging)
-├── pages/           # Page components organized by feature
-│   ├── auth/        # Login, Register, VerifyEmail, etc.
-│   ├── dashboard/   # Dashboard and Analytics pages
-│   ├── projects/    # Project CRUD pages
-│   ├── tasks/       # Task pages (MyTasks, TaskDetail)
-│   └── [feature]/   # Other feature pages
-├── router/          # React Router configuration
-├── App.tsx          # Empty (routing handled by RouterProvider)
-├── main.tsx         # App entry point (QueryClient, Router setup)
-└── index.css        # Global Tailwind styles
+frontend/
+├── public/              # Static assets
+├── src/
+│   ├── assets/         # Images, icons
+│   ├── components/     # React components
+│   │   ├── ai/        # AI-related components (copilot modal)
+│   │   ├── layout/    # Layout components (header, sidebar)
+│   │   ├── shared/    # Reusable components (badges, avatars, guards)
+│   │   └── ui/        # shadcn/ui components (button, dialog, form, etc.)
+│   ├── hooks/         # Custom React hooks
+│   ├── lib/           # Utility functions
+│   ├── pages/         # Page components organized by feature
+│   │   ├── auth/      # Login, register, password reset
+│   │   ├── dashboard/ # Analytics and overview pages
+│   │   ├── departments/
+│   │   ├── invitations/
+│   │   ├── notifications/
+│   │   ├── organization/
+│   │   ├── projects/
+│   │   ├── tasks/
+│   │   └── users/
+│   ├── router/        # React Router configuration
+│   ├── services/      # API client functions (one per domain)
+│   ├── store/         # Zustand state management stores
+│   ├── types/         # TypeScript type definitions
+│   ├── App.tsx        # Empty (routing handled by router/index.tsx)
+│   ├── main.tsx       # Application entry point
+│   └── index.css      # Global styles and Tailwind imports
+└── components.json     # shadcn/ui configuration
 ```
 
 ### Frontend Conventions
 
-- **Path Aliases**: Use `@/` for imports from `src/`
-- **Component Naming**: PascalCase with descriptive suffixes (Page, Layout, Dialog)
-- **Page Structure**: Each feature has its own folder under `pages/`
-- **Route Protection**: `ProtectedRoute` wrapper + `RoleGuard` for role-specific pages
-- **State Management**: 
-  - Server state: React Query hooks
-  - Global state: Zustand stores
-  - Form state: React Hook Form
-- **Styling**: Tailwind utility classes + `cn()` helper for conditional classes
+- **Pages**: Feature-based organization, each page is a route component
+- **Components**: 
+  - `ui/` for primitive shadcn/ui components
+  - `shared/` for reusable business components
+  - `layout/` for structural components
+  - Feature-specific components in `pages/{feature}/components/`
+- **Services**: API client functions using axios, organized by domain
+- **Stores**: Zustand stores for global state (auth, notifications, projects, tasks)
+- **Types**: TypeScript interfaces matching backend models
+- **Hooks**: Custom hooks for auth, permissions, data fetching
+- **Router**: Centralized routing in `router/index.tsx`, bootstrapped in `main.tsx`
 
-## Key Models
+### Key Frontend Files
 
-- **User**: Authentication, roles, organization/department membership
-- **Organization**: Multi-tenant root entity
-- **Department**: Organizational units within an organization
-- **Project**: Work containers with status, priority, budget, members
-- **Task**: Work items assigned to users with time tracking
-- **TaskUpdate**: Progress logs with hours worked
-- **Comment**: Discussion threads on tasks
-- **Notification**: In-app notifications for users
-- **Invitation**: Email-based user onboarding
+- `main.tsx`: App initialization with QueryClient and RouterProvider
+- `router/index.tsx`: Route definitions and protected routes
+- `services/api.ts`: Axios instance with interceptors for auth tokens
+- `store/authStore.ts`: Authentication state and user session
+- `hooks/useAuth.ts`: Authentication helpers
+- `hooks/usePermissions.ts`: Role-based permission checks
 
-## API Route Patterns
+## Multi-Tenant Architecture
 
-```
-/api/auth/*           # Authentication endpoints
-/api/users/*          # User management
-/api/organizations/*  # Organization settings
-/api/departments/*    # Department CRUD
-/api/projects/*       # Project management
-/api/tasks/*          # Task operations
-/api/notifications/*  # Notification feed
-/api/dashboard/*      # Analytics and stats
+All backend models include `organizationId` field with index for data isolation:
+
+```javascript
+organizationId: {
+  type: mongoose.Schema.Types.ObjectId,
+  ref: "Organization",
+  index: true
+}
 ```
 
-## Authentication Flow
+Middleware ensures users can only access data within their organization.
 
-1. User registers → Email OTP sent
-2. User verifies email → Account activated
-3. User logs in → JWT token issued
-4. Token stored in frontend state (Zustand)
-5. Token sent in `Authorization: Bearer <token>` header
-6. Backend middleware validates token and attaches user to `req.user`
+## API Structure
+
+RESTful API with domain-based routing:
+
+- `/api/auth` - Authentication (login, register, verify, reset password)
+- `/api/users` - User management
+- `/api/organization` - Organization settings
+- `/api/departments` - Department management
+- `/api/invitations` - User invitation system
+- `/api/projects` - Project CRUD
+- `/api/tasks` - Task management
+- `/api/task-updates` - Task update submissions
+- `/api/comments` - Task comments
+- `/api/notifications` - User notifications
+- `/api/dashboard` - Analytics and statistics
+- `/api/ai` - AI processing endpoints
+
+## State Management Pattern
+
+Frontend uses layered state management:
+
+1. **Server State**: TanStack Query for API data caching
+2. **Global State**: Zustand for auth, notifications, UI state
+3. **Local State**: React hooks for component-specific state
+4. **Form State**: React Hook Form for form management

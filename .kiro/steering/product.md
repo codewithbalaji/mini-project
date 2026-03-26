@@ -1,25 +1,34 @@
 # Product Overview
 
-Multi-tenant project management system with role-based access control for organizations to manage projects, tasks, and team collaboration.
+AI-powered project management platform designed for multi-tenant SaaS architecture. The system enables organizations to manage projects, tasks, and team collaboration with intelligent automation.
 
-## Core Features
+## Core Capabilities
 
-- Organization management with departments and user roles (ADMIN, MANAGER, EMPLOYEE, VIEWER)
-- Project lifecycle management (PLANNING, ACTIVE, ON_HOLD, COMPLETED, CANCELLED)
-- Task tracking with status workflow (TODO, IN_PROGRESS, IN_REVIEW, DONE, BLOCKED)
-- Time logging and hour tracking per task
-- Email notifications for task assignments, due dates, and status changes
-- Analytics dashboard with project/task metrics and financial tracking
-- Invitation system for onboarding users to organizations
-- Real-time notifications and activity feeds
+- Multi-tenant organization workspaces with data isolation
+- Role-based access control (Admin, Manager, Employee, Viewer)
+- Voice and text-based task reporting with AI processing
+- Real-time analytics dashboards and productivity metrics
+- Automated notifications and alerts for project events
+- AI-powered task update analysis using NLP
+
+## Key Workflows
+
+1. Organization creation and user invitation system
+2. Project and task management with assignments
+3. Employee task updates via voice or text input
+4. AI processing of unstructured updates into structured data
+5. Real-time dashboard monitoring for stakeholders
+6. Automated email notifications for deadlines and status changes
 
 ## User Roles
 
-- **ADMIN**: Full system access, organization settings, user management
-- **MANAGER**: Project creation/management, task assignment, analytics access
-- **EMPLOYEE**: Task execution, time logging, project participation
-- **VIEWER**: Read-only access to projects and tasks
+- **Admin**: Organization owner, manages settings and users
+- **Manager**: Creates projects, assigns tasks, monitors teams
+- **Employee**: Completes tasks, submits updates
+- **Viewer/Stakeholder**: Read-only access to analytics
 
-## Multi-tenancy
+## AI Integration
 
-All data is scoped by `organizationId` to ensure complete data isolation between organizations.
+- OpenRouter AI for natural language understanding and task analysis
+- ElevenLabs for voice processing and transcription
+- Automated extraction of task status, progress, and issues from updates

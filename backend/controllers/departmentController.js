@@ -8,21 +8,19 @@ export const getDepartments = async (req, res) => {
       organizationId: req.user.organizationId,
     }).sort({ createdAt: -1 });
 
-    // Aggregate user count per department
-    const userCounts = await User.aggregate([
-      { $match: { organizationId: req.user.organizationId } },
-      { $group: { _id: "$departmentId", count: { $sum: 1 } } }
-    ]);
-
-    const countMap = userCounts.reduce((acc, curr) => {
-      if (curr._id) acc[curr._id.toString()] = curr.count;
-      return acc;
-    }, {});
-
-    const departmentsWithCounts = departments.map(d => ({
-      ...d.toObject(),
-      userCount: countMap[d._id.toString()] || 0
-    }));
+    // Get user counts for each department
+    const departmentsWithCounts = await Promise.all(
+      departments.map(async (dept) => {
+        const userCount = await User.countDocuments({
+          organizationId: req.user.organizationId,
+          departmentId: dept._id
+        });
+        return {
+          ...dept.toObject(),
+          userCount
+        };
+      })
+    );
 
     res.json(departmentsWithCounts);
   } catch (error) {
