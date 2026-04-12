@@ -31,15 +31,50 @@ export const getUsers = async (req, res) => {
   }
 };
 
-// Update user department (Admin only)
+// Update user department (Admin or Manager)
 export const updateUserDepartment = async (req, res) => {
   try {
     const { departmentId } = req.body;
-    const user = await User.findByIdAndUpdate(
-      req.params.id,
-      { departmentId },
-      { new: true }
-    ).populate("departmentId", "name");
+    
+    // If manager, verify they manage the target department
+    if (req.user.role === "MANAGER" && departmentId) {
+      const Department = (await import("../models/Department.js")).default;
+      const department = await Department.findOne({
+        _id: departmentId,
+        organizationId: req.user.organizationId,
+        managerId: req.user.id // JWT uses 'id' not '_id'
+      });
+      
+      if (!department) {
+        return res.status(403).json({ message: "You can only assign users to departments you manage" });
+      }
+    }
+    
+    const user = await User.findById(req.params.id);
+    
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    
+    // Prevent assigning a manager as a member of their own managed department
+    if (departmentId) {
+      const Department = (await import("../models/Department.js")).default;
+      const department = await Department.findOne({
+        _id: departmentId,
+        managerId: user._id
+      });
+      
+      if (department) {
+        return res.status(400).json({ 
+          message: "Cannot assign a manager as a member of a department they manage" 
+        });
+      }
+    }
+    
+    user.departmentId = departmentId;
+    await user.save();
+    await user.populate("departmentId", "name");
+    
     res.json(user);
   } catch (error) {
     res.status(500).json({ message: error.message });

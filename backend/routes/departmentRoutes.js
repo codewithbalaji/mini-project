@@ -1,11 +1,12 @@
 import express from "express";
-import { getDepartments, createDepartment, updateDepartment } from "../controllers/departmentController.js";
+import { getDepartments, createDepartment, updateDepartment, getDepartmentMembers } from "../controllers/departmentController.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 import allowRoles from "../middleware/roleMiddleware.js";
 
 const router = express.Router();
 
 router.get("/", authMiddleware, getDepartments);
+router.get("/:id/members", authMiddleware, allowRoles("ADMIN", "MANAGER"), getDepartmentMembers);
 router.post("/", authMiddleware, allowRoles("ADMIN"), createDepartment);
 router.put("/:id", authMiddleware, allowRoles("ADMIN"), updateDepartment);
 

@@ -23,7 +23,7 @@ router.put(
 router.put(
   "/:id/department",
   authMiddleware,
-  allowRoles("ADMIN"),
+  allowRoles("ADMIN", "MANAGER"),
   updateUserDepartment
 );
 

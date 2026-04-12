@@ -1,5 +1,6 @@
 import api from "./api";
 import type { Department, CreateDepartmentPayload, UpdateDepartmentPayload } from "@/types/department.types";
+import type { User } from "@/types/user.types";
 
 export const departmentService = {
   getDepartments: () =>
@@ -10,4 +11,7 @@ export const departmentService = {
 
   updateDepartment: (id: string, data: UpdateDepartmentPayload) =>
     api.put<Department>(`/departments/${id}`, data).then((r) => r.data),
+
+  getDepartmentMembers: (id: string) =>
+    api.get<User[]>(`/departments/${id}/members`).then((r) => r.data),
 };

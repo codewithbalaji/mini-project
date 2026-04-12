@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Plus, Building2, Loader2, Edit2, Users } from "lucide-react";
+import { Plus, Building2, Loader2, Edit2, Users, UserCircle } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -15,40 +15,63 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  FormDescription,
 } from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogFooter,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import PageHeader from "@/components/shared/PageHeader";
+import DepartmentMembersDialog from "./components/DepartmentMembersDialog";
 import { departmentService } from "@/services/departmentService";
+import { userService } from "@/services/userService";
 import { usePermissions } from "@/hooks/usePermissions";
 import type { Department } from "@/types/department.types";
 
 const schema = z.object({
   name: z.string().min(2, "Department name must be at least 2 characters"),
+  managerId: z.string().optional(),
 });
 type FormData = z.infer<typeof schema>;
 
 export default function DepartmentsPage() {
   const queryClient = useQueryClient();
-  const { isAdmin } = usePermissions();
+  const { isAdmin, isManager } = usePermissions();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editTarget, setEditTarget] = useState<Department | null>(null);
+  const [membersDialogDept, setMembersDialogDept] = useState<Department | null>(null);
 
   const { data: departments, isLoading } = useQuery({
     queryKey: ["departments"],
     queryFn: departmentService.getDepartments,
   });
 
+  // Fetch managers for assignment dropdown (Admin only)
+  const { data: managers } = useQuery({
+    queryKey: ["users", "managers"],
+    queryFn: async () => {
+      const users = await userService.getUsers();
+      return users.filter((u) => u.role === "MANAGER");
+    },
+    enabled: isAdmin,
+  });
+
   const form = useForm<FormData>({
     resolver: zodResolver(schema),
-    defaultValues: { name: "" },
+    defaultValues: { name: "", managerId: "" },
   });
 
   const { mutate: createMutate, isPending: creating } = useMutation({
@@ -64,7 +87,8 @@ export default function DepartmentsPage() {
   });
 
   const { mutate: editMutate, isPending: editing } = useMutation({
-    mutationFn: ({ id, name }: { id: string; name: string }) => departmentService.updateDepartment(id, { name }),
+    mutationFn: ({ id, data }: { id: string; data: { name: string; managerId?: string } }) => 
+      departmentService.updateDepartment(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["departments"] });
       toast.success("Department updated");
@@ -79,13 +103,22 @@ export default function DepartmentsPage() {
 
   const handleOpenCreate = () => {
     setEditTarget(null);
-    form.reset({ name: "" });
+    form.reset({ name: "", managerId: "" });
     setDialogOpen(true);
   };
 
   const handleOpenEdit = (dept: Department) => {
     setEditTarget(dept);
-    form.reset({ name: dept.name });
+    const managerId = typeof dept.managerId === "object" ? dept.managerId?._id : dept.managerId;
+    form.reset({ name: dept.name, managerId: managerId || "" });
+  };
+
+  const getManagerName = (dept: Department) => {
+    if (!dept.managerId) return null;
+    if (typeof dept.managerId === "object") {
+      return dept.managerId.name;
+    }
+    return null;
   };
 
   return (
@@ -116,32 +149,54 @@ export default function DepartmentsPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {departments?.map((dept) => (
-            <Card key={dept._id} className="relative group">
-              <CardHeader className="pb-2 pr-12">
-                <CardTitle className="text-base">{dept.name}</CardTitle>
-                {isAdmin && (
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    className="absolute top-4 right-4 h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
-                    onClick={() => handleOpenEdit(dept)}
-                  >
-                    <Edit2 size={16} className="text-muted-foreground" />
-                  </Button>
-                )}
-              </CardHeader>
-              <CardContent className="text-sm text-muted-foreground flex items-center justify-between">
-                <span>Created {new Date(dept.createdAt).toLocaleDateString()}</span>
-                {dept.userCount !== undefined && (
-                  <span className="flex items-center gap-1.5 bg-secondary/50 px-2 py-0.5 rounded text-xs">
-                    <Users size={12} />
-                    {dept.userCount} member{dept.userCount !== 1 && 's'}
-                  </span>
-                )}
-              </CardContent>
-            </Card>
-          ))}
+          {departments?.map((dept) => {
+            const managerName = getManagerName(dept);
+            return (
+              <Card key={dept._id} className="relative group">
+                <CardHeader className="pb-2 pr-12">
+                  <CardTitle className="text-base">{dept.name}</CardTitle>
+                  {isAdmin && (
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="absolute top-4 right-4 h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={() => handleOpenEdit(dept)}
+                    >
+                      <Edit2 size={16} className="text-muted-foreground" />
+                    </Button>
+                  )}
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  {managerName && (
+                    <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                      <UserCircle size={14} />
+                      <span className="text-xs">Manager: {managerName}</span>
+                    </div>
+                  )}
+                  <div className="flex items-center justify-between text-sm text-muted-foreground">
+                    <span className="text-xs">Created {new Date(dept.createdAt).toLocaleDateString()}</span>
+                    {dept.userCount !== undefined && (
+                      <span className="flex items-center gap-1.5 bg-secondary/50 px-2 py-0.5 rounded text-xs">
+                        <Users size={12} />
+                        {dept.userCount} member{dept.userCount !== 1 && 's'}
+                      </span>
+                    )}
+                  </div>
+                  {(isAdmin || isManager) && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="w-full mt-2"
+                      onClick={() => setMembersDialogDept(dept)}
+                    >
+                      <Users size={14} className="mr-2" />
+                      View Members
+                    </Button>
+                  )}
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       )}
 
@@ -155,14 +210,21 @@ export default function DepartmentsPage() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>{editTarget ? "Edit Department" : "Create Department"}</DialogTitle>
+            <DialogDescription>
+              {editTarget ? "Update department details" : "Create a new department for your organization"}
+            </DialogDescription>
           </DialogHeader>
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit((data) => {
+                const payload = {
+                  name: data.name,
+                  managerId: data.managerId || undefined,
+                };
                 if (editTarget) {
-                  editMutate({ id: editTarget._id, name: data.name });
+                  editMutate({ id: editTarget._id, data: payload });
                 } else {
-                  createMutate(data);
+                  createMutate(payload);
                 }
               })}
               className="space-y-4"
@@ -180,6 +242,41 @@ export default function DepartmentsPage() {
                   </FormItem>
                 )}
               />
+
+              {isAdmin && (
+                <FormField
+                  control={form.control}
+                  name="managerId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Department Manager</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a manager (optional)" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="">No manager</SelectItem>
+                          {managers?.map((manager) => (
+                            <SelectItem key={manager._id} value={manager._id}>
+                              {manager.name} ({manager.email})
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormDescription>
+                        Managers can only see departments they manage
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+
               <DialogFooter>
                 <Button
                   type="button"
@@ -200,6 +297,13 @@ export default function DepartmentsPage() {
           </Form>
         </DialogContent>
       </Dialog>
+
+      {/* Members Dialog */}
+      <DepartmentMembersDialog
+        department={membersDialogDept}
+        open={!!membersDialogDept}
+        onOpenChange={(open) => !open && setMembersDialogDept(null)}
+      />
     </div>
   );
 }
