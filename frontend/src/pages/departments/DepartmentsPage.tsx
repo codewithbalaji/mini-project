@@ -43,7 +43,7 @@ import type { Department } from "@/types/department.types";
 
 const schema = z.object({
   name: z.string().min(2, "Department name must be at least 2 characters"),
-  managerId: z.string().optional(),
+  managerId: z.string().min(1, "Please select a manager"),
 });
 type FormData = z.infer<typeof schema>;
 
@@ -219,7 +219,7 @@ export default function DepartmentsPage() {
               onSubmit={form.handleSubmit((data) => {
                 const payload = {
                   name: data.name,
-                  managerId: data.managerId || undefined,
+                  managerId: data.managerId,
                 };
                 if (editTarget) {
                   editMutate({ id: editTarget._id, data: payload });
@@ -256,11 +256,10 @@ export default function DepartmentsPage() {
                       >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select a manager (optional)" />
+                            <SelectValue placeholder="Select a manager" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="">No manager</SelectItem>
                           {managers?.map((manager) => (
                             <SelectItem key={manager._id} value={manager._id}>
                               {manager.name} ({manager.email})
