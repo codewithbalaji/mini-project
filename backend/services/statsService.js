@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Project from "../models/Project.js";
 import Task from "../models/Task.js";
 
@@ -67,7 +68,7 @@ const getOrgStats = async (organizationId) => {
   const workloadData = await Task.aggregate([
     {
       $match: {
-        organizationId: organizationId,
+        organizationId: new mongoose.Types.ObjectId(organizationId),
         status: { $nin: ["DONE", "CANCELLED"] }
       }
     },

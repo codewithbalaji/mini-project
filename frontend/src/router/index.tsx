@@ -33,6 +33,9 @@ import MyTasksPage from "@/pages/tasks/MyTasksPage";
 // Phase 2 — Notifications
 import NotificationsPage from "@/pages/notifications/NotificationsPage";
 
+// Reports
+import ReportsPage from "@/pages/reports/ReportsPage";
+
 export const router = createBrowserRouter([
   // Public auth routes
   {
@@ -136,6 +139,16 @@ export const router = createBrowserRouter([
 
           // ── Phase 2 — Notifications ────────────────────────────────────
           { path: "/notifications", element: <NotificationsPage /> },
+
+          // ── Reports ────────────────────────────────────────────────────
+          {
+            path: "/reports",
+            element: (
+              <RoleGuard roles={["ADMIN", "MANAGER"]}>
+                <ReportsPage />
+              </RoleGuard>
+            ),
+          },
         ],
       },
     ],

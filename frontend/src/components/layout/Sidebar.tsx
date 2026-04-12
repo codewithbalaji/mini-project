@@ -9,6 +9,7 @@ import {
   FolderKanban,
   CheckSquare,
   Bell,
+  FileText,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { usePermissions } from "@/hooks/usePermissions";
@@ -52,6 +53,12 @@ const phase2Items: NavItem[] = [
     to: "/projects",
     icon: <FolderKanban size={18} />,
     // visible to all roles
+  },
+  {
+    label: "Reports",
+    to: "/reports",
+    icon: <FileText size={18} />,
+    roles: ["ADMIN", "MANAGER"],
   },
   {
     label: "My Tasks",

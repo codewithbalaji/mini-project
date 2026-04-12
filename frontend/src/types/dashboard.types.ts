@@ -1,6 +1,27 @@
+export interface WorkloadDataItem {
+  userId: string;
+  userName: string;
+  taskCount: number;
+}
+
+export interface RecentActivityItem {
+  _id: string;
+  taskId: { _id: string; title: string; status: string };
+  submittedBy: { _id: string; name: string; email: string };
+  updateText: string;
+  hoursLogged: number;
+  statusChange: string | null;
+  createdAt: string;
+}
+
 export interface OrgDashboard {
-  stats: any;
-  recentActivity: any[];
+  stats: {
+    totalProjects: number;
+    projectStatusCounts: Record<string, number>;
+    workloadData: WorkloadDataItem[];
+    overdueCount: number;
+  };
+  recentActivity: RecentActivityItem[];
 }
 
 export interface ProjectDashboard {
