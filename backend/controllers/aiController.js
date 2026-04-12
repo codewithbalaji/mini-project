@@ -1,5 +1,4 @@
 import { getAIResponse } from "../services/ai.service.js";
-import { generateSpeech } from "../services/voice.service.js";
 import TaskInsight from "../models/TaskInsight.js";
 import Task from "../models/Task.js";
 
@@ -7,6 +6,9 @@ import Task from "../models/Task.js";
 export const myTasksAssistant = async (req, res) => {
   try {
     const { query, tasks } = req.body;
+    
+    console.log('AI Assistant received query:', query);
+    console.log('AI Assistant received tasks:', tasks?.length || 0, 'tasks');
     
     if (!query) {
       return res.status(400).json({ message: "Query is required" });
@@ -86,24 +88,6 @@ ${JSON.stringify(taskContext, null, 2)}`
   } catch (error) {
     console.error("taskDetailAssistant error:", error);
     res.status(500).json({ message: "Failed to process task detail AI request" });
-  }
-};
-
-// @route POST /api/ai/text-to-speech
-export const textToSpeech = async (req, res) => {
-  try {
-    const { text } = req.body;
-    if (!text) {
-      return res.status(400).json({ message: "Text is required" });
-    }
-
-    const audioBuffer = await generateSpeech(text);
-    
-    res.set('Content-Type', 'audio/mpeg');
-    res.send(Buffer.from(audioBuffer));
-  } catch (error) {
-    console.error("textToSpeech error:", error);
-    res.status(500).json({ message: "Failed to generate speech" });
   }
 };
 

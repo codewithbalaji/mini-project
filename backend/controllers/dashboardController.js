@@ -6,11 +6,29 @@ import statsService from "../services/statsService.js";
 // GET /api/dashboard/org — ADMIN, MANAGER, VIEWER
 export const getOrgDashboard = async (req, res) => {
   try {
-    const { organizationId } = req.user;
-    const stats = await statsService.getOrgStats(organizationId);
+    const { organizationId, id: userId, role } = req.user;
+    
+    // For managers, filter by their projects only
+    let projectFilter = { organizationId };
+    if (role === "MANAGER") {
+      projectFilter.managerId = userId;
+    }
+    
+    const projects = await Project.find(projectFilter);
+    const projectIds = projects.map(p => p._id);
+    
+    // Get stats (for managers, scoped to their projects)
+    const stats = role === "MANAGER" 
+      ? await statsService.getOrgStatsForManager(organizationId, projectIds)
+      : await statsService.getOrgStats(organizationId);
 
-    // Recent activity: last 10 task updates across the org
-    const recentActivity = await TaskUpdate.find({ organizationId })
+    // Recent activity: last 10 task updates
+    const activityFilter = { organizationId };
+    if (role === "MANAGER") {
+      activityFilter.projectId = { $in: projectIds };
+    }
+    
+    const recentActivity = await TaskUpdate.find(activityFilter)
       .populate("submittedBy", "name email")
       .populate("taskId", "title status")
       .sort({ createdAt: -1 })
@@ -25,12 +43,12 @@ export const getOrgDashboard = async (req, res) => {
 // GET /api/dashboard/analytics — ADMIN, MANAGER, VIEWER
 export const getAnalyticsDashboard = async (req, res) => {
   try {
-    const { organizationId, departmentId, role } = req.user;
+    const { organizationId, id: userId, role } = req.user;
     
-    // Admins/Viewers see everything. Managers only see their department.
-    const filterDeptId = role === "MANAGER" ? departmentId : null;
+    // Admins/Viewers see everything. Managers only see their own projects.
+    const filterManagerId = role === "MANAGER" ? userId : null;
 
-    const analytics = await statsService.getAnalyticsDashboardStats(organizationId, filterDeptId);
+    const analytics = await statsService.getAnalyticsDashboardStats(organizationId, filterManagerId);
 
     res.json(analytics);
   } catch (error) {

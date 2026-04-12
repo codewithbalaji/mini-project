@@ -23,15 +23,18 @@ const STATUSES: TaskStatus[] = ["TODO", "IN_PROGRESS", "IN_REVIEW", "DONE", "BLO
 const TaskDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { selectedTask, fetchTaskById, fetchTaskUpdates, taskUpdates, updateTask, loading } = useTaskStore();
+  const { selectedTask, fetchTaskById, fetchTaskUpdates, taskUpdates, updateTask, loading, setSelectedTask } = useTaskStore();
   const { user } = useAuthStore();
   const [tab, setTab] = useState<"updates" | "comments">("updates");
 
   const canEdit = user?.role === "ADMIN" || user?.role === "MANAGER";
   const isAssignee = selectedTask?.assignedTo && (selectedTask.assignedTo as User)._id === user?._id;
+  const canSubmitUpdate = isAssignee; // Only assigned user can submit updates
 
   useEffect(() => {
     if (id) {
+      // Clear previous task to avoid showing stale data
+      setSelectedTask(null);
       fetchTaskById(id);
       fetchTaskUpdates(id);
     }
@@ -126,8 +129,8 @@ const TaskDetailPage = () => {
         </Card>
       </div>
 
-      {/* Status change bar */}
-      {(canEdit || isAssignee) && (
+      {/* Status change bar - Only for managers/admins */}
+      {canEdit && (
         <Card>
           <CardContent className="pt-4">
             <p className="text-xs text-muted-foreground uppercase font-medium tracking-wide mb-3">Change Status</p>
@@ -176,7 +179,7 @@ const TaskDetailPage = () => {
 
       {tab === "updates" && (
         <div className="space-y-4">
-          {(canEdit || isAssignee) && id && <TaskUpdateForm taskId={id} />}
+          {canSubmitUpdate && id && <TaskUpdateForm taskId={id} />}
           <TaskUpdateList updates={taskUpdates} />
         </div>
       )}

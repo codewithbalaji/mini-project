@@ -100,7 +100,7 @@ ${JSON.stringify(projectContext, null, 2)}`,
       },
     ];
 
-    const aiRes = await getAIResponse(messages, "gemini-flash-latest", true);
+    const aiRes = await getAIResponse(messages, "gemini-2.5-flash-lite", true);
 
     let reportData = {};
     try {

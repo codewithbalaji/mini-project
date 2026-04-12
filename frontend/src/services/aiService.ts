@@ -15,10 +15,6 @@ const aiService = {
   taskDetailAssistant: async (query: string, taskContext: any): Promise<TaskDetailAssistantResponse> => {
     const response = await api.post("/ai/task-detail", { query, taskContext });
     return response.data;
-  },
-  textToSpeech: async (text: string): Promise<Blob> => {
-    const response = await api.post("/ai/tts", { text }, { responseType: 'blob' });
-    return response.data;
   }
 };
 

@@ -61,7 +61,7 @@ export default function AnalyticsDashboardPage() {
           isAdmin
             ? "Organization-wide corporate analytics."
             : isManager
-            ? "Department analytics — project progress, team productivity, and delay tracking."
+            ? "Your project analytics — track progress, team productivity, and delays for projects you manage."
             : "Organization-wide analytics (read-only)."
         }
       />

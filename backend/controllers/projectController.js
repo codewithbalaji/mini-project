@@ -69,7 +69,7 @@ export const createProject = async (req, res) => {
 // GET /api/projects — all roles (org-scoped, role-filtered)
 export const getProjects = async (req, res) => {
   try {
-    const { organizationId, id: userId, role } = req.user;
+    const { organizationId, id: userId, role, departmentId: userDepartmentId } = req.user;
     const { status, priority, departmentId } = req.query;
 
     const filter = { organizationId };
@@ -77,6 +77,11 @@ export const getProjects = async (req, res) => {
     // Employees only see projects they are members of
     if (role === "EMPLOYEE") {
       filter.members = userId;
+    }
+
+    // Managers only see projects they manage
+    if (role === "MANAGER") {
+      filter.managerId = userId;
     }
 
     if (status) filter.status = status;
@@ -113,6 +118,14 @@ export const getProjectById = async (req, res) => {
     if (req.user.role === "EMPLOYEE") {
       const isMember = project.members.some((m) => m._id.toString() === req.user.id);
       if (!isMember) return res.status(403).json({ message: "Access denied" });
+    }
+
+    // MANAGER can only view projects they manage
+    if (req.user.role === "MANAGER") {
+      const projectManagerId = project.managerId?._id?.toString() || project.managerId?.toString();
+      if (projectManagerId !== req.user.id) {
+        return res.status(403).json({ message: "Access denied" });
+      }
     }
 
     res.json({ project });

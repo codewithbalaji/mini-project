@@ -111,20 +111,89 @@ const getOrgStats = async (organizationId) => {
 };
 
 /**
+ * Get stats for manager dashboard (scoped to their projects only).
+ */
+const getOrgStatsForManager = async (organizationId, projectIds) => {
+  const projects = await Project.find({ 
+    organizationId,
+    _id: { $in: projectIds }
+  });
+
+  const projectStatusCounts = {
+    PLANNING: 0,
+    ACTIVE: 0,
+    ON_HOLD: 0,
+    COMPLETED: 0,
+    CANCELLED: 0
+  };
+
+  for (const project of projects) {
+    projectStatusCounts[project.status] = (projectStatusCounts[project.status] || 0) + 1;
+  }
+
+  // Per-member open task count (workload distribution) - only for manager's projects
+  const workloadData = await Task.aggregate([
+    {
+      $match: {
+        organizationId: new mongoose.Types.ObjectId(organizationId),
+        projectId: { $in: projectIds.map(id => new mongoose.Types.ObjectId(id)) },
+        status: { $nin: ["DONE", "CANCELLED"] }
+      }
+    },
+    {
+      $group: {
+        _id: "$assignedTo",
+        taskCount: { $sum: 1 }
+      }
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "_id",
+        foreignField: "_id",
+        as: "user"
+      }
+    },
+    {
+      $project: {
+        userId: "$_id",
+        taskCount: 1,
+        userName: { $arrayElemAt: ["$user.name", 0] }
+      }
+    }
+  ]);
+
+  // Overdue tasks in manager's projects
+  const overdueCount = await Task.countDocuments({
+    organizationId,
+    projectId: { $in: projectIds },
+    dueDate: { $lt: new Date() },
+    status: { $nin: ["DONE"] }
+  });
+
+  return {
+    totalProjects: projects.length,
+    projectStatusCounts,
+    workloadData,
+    overdueCount
+  };
+};
+
+/**
  * Get aggregated stats for the Enterprise Analytics Dashboard.
  * Admin/Viewer: sees org-wide data.
- * Manager: sees department-wide data.
+ * Manager: sees only their own projects.
  */
-const getAnalyticsDashboardStats = async (organizationId, departmentId = null) => {
+const getAnalyticsDashboardStats = async (organizationId, managerId = null) => {
   const projectFilter = { organizationId };
-  if (departmentId) projectFilter.departmentId = departmentId;
+  if (managerId) projectFilter.managerId = managerId;
 
   const projects = await Project.find(projectFilter);
   const projectIds = projects.map(p => p._id);
 
   const taskFilter = { organizationId };
-  if (departmentId) {
-    // Managers only see tasks belonging to their department's projects
+  if (managerId) {
+    // Managers only see tasks belonging to their own projects
     taskFilter.projectId = { $in: projectIds };
   }
   const tasks = await Task.find(taskFilter);
@@ -217,4 +286,4 @@ const getAnalyticsDashboardStats = async (organizationId, departmentId = null) =
   };
 };
 
-export default { getProjectStats, getOrgStats, getAnalyticsDashboardStats };
+export default { getProjectStats, getOrgStats, getOrgStatsForManager, getAnalyticsDashboardStats };

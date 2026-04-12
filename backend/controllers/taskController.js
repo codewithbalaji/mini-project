@@ -141,9 +141,24 @@ export const getTaskById = async (req, res) => {
 
     if (!task) return res.status(404).json({ message: "Task not found" });
 
-    // EMPLOYEE can only view their own tasks
-    if (req.user.role === "EMPLOYEE" && task.assignedTo?._id.toString() !== req.user.id) {
-      return res.status(403).json({ message: "Access denied" });
+    // EMPLOYEE can view tasks if:
+    // 1. They are assigned to the task, OR
+    // 2. They are a member of the project
+    if (req.user.role === "EMPLOYEE") {
+      const isAssignee = task.assignedTo?._id.toString() === req.user.id;
+      
+      if (!isAssignee) {
+        // Check if employee is a member of the project
+        const project = await Project.findOne({
+          _id: task.projectId,
+          organizationId: req.user.organizationId,
+          members: req.user.id
+        });
+        
+        if (!project) {
+          return res.status(403).json({ message: "Access denied" });
+        }
+      }
     }
 
     res.json({ task });
@@ -152,7 +167,7 @@ export const getTaskById = async (req, res) => {
   }
 };
 
-// PUT /api/tasks/:id — MANAGER updates meta; EMPLOYEE only updates status
+// PUT /api/tasks/:id — MANAGER updates meta; EMPLOYEE only updates status on their own tasks
 export const updateTask = async (req, res) => {
   try {
     const task = await Task.findOne({
@@ -166,6 +181,11 @@ export const updateTask = async (req, res) => {
     const oldStatus = task.status;
 
     if (role === "EMPLOYEE") {
+      // Employees can only update status on their own assigned tasks
+      if (task.assignedTo?.toString() !== updaterId) {
+        return res.status(403).json({ message: "You can only update tasks assigned to you" });
+      }
+      
       task.status = req.body.status || task.status;
       if (req.body.status === "DONE") task.completedAt = new Date();
     } else {

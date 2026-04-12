@@ -33,6 +33,7 @@ export interface TaskUpdate {
   updateText: string;
   hoursLogged: number;
   statusChange?: TaskStatus | null;
+  isAIGenerated?: boolean;
   // Phase 3 fields (empty in Phase 2)
   aiSummary: string;
   extractedStatus: string | null;
@@ -70,6 +71,7 @@ export interface SubmitUpdatePayload {
   updateText: string;
   hoursLogged?: number;
   statusChange?: TaskStatus | null;
+  isAIGenerated?: boolean;
 }
 
 export interface TaskInsightRecommendation {

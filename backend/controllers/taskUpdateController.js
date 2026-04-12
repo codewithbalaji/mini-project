@@ -3,18 +3,18 @@ import Task from "../models/Task.js";
 import Project from "../models/Project.js";
 import notificationService from "../services/notificationService.js";
 
-// POST /api/task-updates — EMPLOYEE (or MANAGER)
+// POST /api/task-updates — Only assigned EMPLOYEE can submit
 export const submitUpdate = async (req, res) => {
   try {
-    const { taskId, updateText, hoursLogged, statusChange } = req.body;
+    const { taskId, updateText, hoursLogged, statusChange, isAIGenerated } = req.body;
     const { id: submittedBy, organizationId, name: employeeName } = req.user;
 
     const task = await Task.findOne({ _id: taskId, organizationId });
     if (!task) return res.status(404).json({ message: "Task not found" });
 
-    // EMPLOYEE can only update their own tasks
-    if (req.user.role === "EMPLOYEE" && task.assignedTo?.toString() !== submittedBy) {
-      return res.status(403).json({ message: "Access denied" });
+    // Only the assigned user can submit updates
+    if (task.assignedTo?.toString() !== submittedBy) {
+      return res.status(403).json({ message: "Only the assigned user can submit task updates" });
     }
 
     const update = new TaskUpdate({
@@ -24,7 +24,8 @@ export const submitUpdate = async (req, res) => {
       submittedBy,
       updateText,
       hoursLogged: hoursLogged || 0,
-      statusChange: statusChange || null
+      statusChange: statusChange || null,
+      isAIGenerated: isAIGenerated || false
 
       // Phase 3: aiService.processUpdate(updateText) will fill aiSummary, extractedStatus, extractedProgress
     });
