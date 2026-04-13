@@ -199,8 +199,8 @@ const getAnalyticsDashboardStats = async (organizationId, managerId = null) => {
   const tasks = await Task.find(taskFilter);
 
   // 1. Top-Level KPIs
-  const activeStatuses = ["PLANNING", "ACTIVE", "ON_HOLD"];
-  const totalActiveProjects = projects.filter(p => activeStatuses.includes(p.status)).length;
+  // Only count projects with ACTIVE status to match dashboard
+  const totalActiveProjects = projects.filter(p => p.status === "ACTIVE").length;
   const totalTasks = tasks.length;
   const doneTasks = tasks.filter(t => t.status === "DONE").length;
   const taskCompletionRate = totalTasks > 0 ? Math.round((doneTasks / totalTasks) * 100) : 0;

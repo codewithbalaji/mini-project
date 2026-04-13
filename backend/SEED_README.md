@@ -4,7 +4,7 @@ This seed script populates your MongoDB database with realistic dummy data for t
 
 ## What Gets Created
 
-### Organization 1: TechCorp Solutions (Software Development)
+### Organization 1: TestOrg (Software Development)
 
 **Departments:**
 - Engineering
@@ -13,13 +13,13 @@ This seed script populates your MongoDB database with realistic dummy data for t
 - Marketing
 
 **Users (7):**
-- Alice Admin (ADMIN) - alice@techcorp.com
-- Bob Manager (MANAGER) - bob@techcorp.com
-- Carol Manager (MANAGER) - carol@techcorp.com
-- David Developer (EMPLOYEE) - david@techcorp.com
-- Emma Engineer (EMPLOYEE) - emma@techcorp.com
-- Frank Designer (EMPLOYEE) - frank@techcorp.com
-- Grace Viewer (VIEWER) - grace@techcorp.com
+- Alice Admin (ADMIN) - admin@testorg.com
+- Bob Manager (MANAGER) - manager1@testorg.com
+- Carol Manager (MANAGER) - manager2@testorg.com
+- David Developer (EMPLOYEE) - employee1@testorg.com
+- Emma Engineer (EMPLOYEE) - employee2@testorg.com
+- Frank Designer (EMPLOYEE) - employee3@testorg.com
+- Grace Viewer (VIEWER) - viewer@testorg.com
 
 **Projects (4):**
 1. E-Commerce Platform Redesign (ACTIVE, HIGH priority)
@@ -35,17 +35,17 @@ This seed script populates your MongoDB database with realistic dummy data for t
 - Notifications (read and unread)
 - Pending and expired invitations
 
-### Organization 2: DesignHub Agency (Creative Services)
+### Organization 2: TestOrg2 (Creative Services)
 
 **Departments:**
 - Creative
 - Client Services
 
 **Users (4):**
-- Helen Admin (ADMIN) - helen@designhub.com
-- Ian Manager (MANAGER) - ian@designhub.com
-- Julia Designer (EMPLOYEE) - julia@designhub.com
-- Kevin Designer (EMPLOYEE) - kevin@designhub.com
+- Helen Admin (ADMIN) - admin@testorg2.com
+- Ian Manager (MANAGER) - manager@testorg2.com
+- Julia Designer (EMPLOYEE) - employee1@testorg2.com
+- Kevin Designer (EMPLOYEE) - employee2@testorg2.com
 
 **Projects (2):**
 1. Brand Identity for StartupXYZ (ACTIVE, HIGH priority)
@@ -92,20 +92,20 @@ node seed.js
 
 All users have the same password: `password123`
 
-### TechCorp Solutions Users:
-- `alice@techcorp.com` - Full admin access
-- `bob@techcorp.com` - Manager (Engineering)
-- `carol@techcorp.com` - Manager (Product)
-- `david@techcorp.com` - Developer
-- `emma@techcorp.com` - Engineer
-- `frank@techcorp.com` - Designer
-- `grace@techcorp.com` - Viewer (read-only)
+### TestOrg Users:
+- `admin@testorg.com` - Full admin access
+- `manager1@testorg.com` - Manager (Engineering)
+- `manager2@testorg.com` - Manager (Product)
+- `employee1@testorg.com` - Developer
+- `employee2@testorg.com` - Engineer
+- `employee3@testorg.com` - Designer
+- `viewer@testorg.com` - Viewer (read-only)
 
-### DesignHub Agency Users:
-- `helen@designhub.com` - Full admin access
-- `ian@designhub.com` - Manager
-- `julia@designhub.com` - Designer
-- `kevin@designhub.com` - Designer
+### TestOrg2 Users:
+- `admin@testorg2.com` - Full admin access
+- `manager@testorg2.com` - Manager
+- `employee1@testorg2.com` - Designer
+- `employee2@testorg2.com` - Designer
 
 ## Data Features
 

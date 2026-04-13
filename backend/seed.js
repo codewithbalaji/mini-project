@@ -49,10 +49,10 @@ const seedDatabase = async () => {
     console.log('✅ Cleared all collections');
 
     // ========== ORGANIZATION 1: TechCorp Solutions ==========
-    console.log('🏢 Creating Organization 1: TechCorp Solutions...');
+    console.log('🏢 Creating Organization 1: TestOrg...');
     
     const org1 = await Organization.create({
-      name: 'TechCorp Solutions',
+      name: 'TestOrg',
       industry: 'Software Development'
     });
 
@@ -68,7 +68,7 @@ const seedDatabase = async () => {
     const techUsers = await User.insertMany([
       {
         name: 'Alice Admin',
-        email: 'alice@techcorp.com',
+        email: 'admin@testorg.com',
         password: await hashPassword('password123'),
         role: 'ADMIN',
         organizationId: org1._id,
@@ -77,7 +77,7 @@ const seedDatabase = async () => {
       },
       {
         name: 'Bob Manager',
-        email: 'bob@techcorp.com',
+        email: 'manager1@testorg.com',
         password: await hashPassword('password123'),
         role: 'MANAGER',
         organizationId: org1._id,
@@ -86,7 +86,7 @@ const seedDatabase = async () => {
       },
       {
         name: 'Carol Manager',
-        email: 'carol@techcorp.com',
+        email: 'manager2@testorg.com',
         password: await hashPassword('password123'),
         role: 'MANAGER',
         organizationId: org1._id,
@@ -95,7 +95,7 @@ const seedDatabase = async () => {
       },
       {
         name: 'David Developer',
-        email: 'david@techcorp.com',
+        email: 'employee1@testorg.com',
         password: await hashPassword('password123'),
         role: 'EMPLOYEE',
         organizationId: org1._id,
@@ -104,7 +104,7 @@ const seedDatabase = async () => {
       },
       {
         name: 'Emma Engineer',
-        email: 'emma@techcorp.com',
+        email: 'employee2@testorg.com',
         password: await hashPassword('password123'),
         role: 'EMPLOYEE',
         organizationId: org1._id,
@@ -113,7 +113,7 @@ const seedDatabase = async () => {
       },
       {
         name: 'Frank Designer',
-        email: 'frank@techcorp.com',
+        email: 'employee3@testorg.com',
         password: await hashPassword('password123'),
         role: 'EMPLOYEE',
         organizationId: org1._id,
@@ -122,7 +122,7 @@ const seedDatabase = async () => {
       },
       {
         name: 'Grace Viewer',
-        email: 'grace@techcorp.com',
+        email: 'viewer@testorg.com',
         password: await hashPassword('password123'),
         role: 'VIEWER',
         organizationId: org1._id,
@@ -493,7 +493,7 @@ const seedDatabase = async () => {
     // Invitations
     const invitations = await Invitation.insertMany([
       {
-        email: 'newdev@techcorp.com',
+        email: 'newemployee@testorg.com',
         role: 'EMPLOYEE',
         organizationId: org1._id,
         departmentId: techDepts[0]._id,
@@ -503,7 +503,7 @@ const seedDatabase = async () => {
         invitedBy: techUsers[0]._id
       },
       {
-        email: 'oldemployee@techcorp.com',
+        email: 'expiredemployee@testorg.com',
         role: 'EMPLOYEE',
         organizationId: org1._id,
         departmentId: techDepts[0]._id,
@@ -517,10 +517,10 @@ const seedDatabase = async () => {
     console.log(`✅ Created ${invitations.length} invitations for TechCorp`);
 
     // ========== ORGANIZATION 2: DesignHub Agency ==========
-    console.log('\n🏢 Creating Organization 2: DesignHub Agency...');
-    
+    console.log('\n🏢 Creating Organization 2: TestOrg2...');
+
     const org2 = await Organization.create({
-      name: 'DesignHub Agency',
+      name: 'TestOrg2',
       industry: 'Creative Services'
     });
 
@@ -534,7 +534,7 @@ const seedDatabase = async () => {
     const designUsers = await User.insertMany([
       {
         name: 'Helen Admin',
-        email: 'helen@designhub.com',
+        email: 'admin@testorg2.com',
         password: await hashPassword('password123'),
         role: 'ADMIN',
         organizationId: org2._id,
@@ -543,7 +543,7 @@ const seedDatabase = async () => {
       },
       {
         name: 'Ian Manager',
-        email: 'ian@designhub.com',
+        email: 'manager@testorg2.com',
         password: await hashPassword('password123'),
         role: 'MANAGER',
         organizationId: org2._id,
@@ -552,7 +552,7 @@ const seedDatabase = async () => {
       },
       {
         name: 'Julia Designer',
-        email: 'julia@designhub.com',
+        email: 'employee1@testorg2.com',
         password: await hashPassword('password123'),
         role: 'EMPLOYEE',
         organizationId: org2._id,
@@ -561,7 +561,7 @@ const seedDatabase = async () => {
       },
       {
         name: 'Kevin Designer',
-        email: 'kevin@designhub.com',
+        email: 'employee2@testorg2.com',
         password: await hashPassword('password123'),
         role: 'EMPLOYEE',
         organizationId: org2._id,
@@ -761,20 +761,20 @@ const seedDatabase = async () => {
     console.log(`   Invitations: ${stats.invitations}`);
 
     console.log('\n👥 Test User Credentials (password: password123):');
-    console.log('\n   TechCorp Solutions:');
-    console.log('   - alice@techcorp.com (ADMIN)');
-    console.log('   - bob@techcorp.com (MANAGER)');
-    console.log('   - carol@techcorp.com (MANAGER)');
-    console.log('   - david@techcorp.com (EMPLOYEE)');
-    console.log('   - emma@techcorp.com (EMPLOYEE)');
-    console.log('   - frank@techcorp.com (EMPLOYEE)');
-    console.log('   - grace@techcorp.com (VIEWER)');
+    console.log('\n   TestOrg:');
+    console.log('   - admin@testorg.com (ADMIN)');
+    console.log('   - manager1@testorg.com (MANAGER)');
+    console.log('   - manager2@testorg.com (MANAGER)');
+    console.log('   - employee1@testorg.com (EMPLOYEE)');
+    console.log('   - employee2@testorg.com (EMPLOYEE)');
+    console.log('   - employee3@testorg.com (EMPLOYEE)');
+    console.log('   - viewer@testorg.com (VIEWER)');
 
-    console.log('\n   DesignHub Agency:');
-    console.log('   - helen@designhub.com (ADMIN)');
-    console.log('   - ian@designhub.com (MANAGER)');
-    console.log('   - julia@designhub.com (EMPLOYEE)');
-    console.log('   - kevin@designhub.com (EMPLOYEE)');
+    console.log('\n   TestOrg2:');
+    console.log('   - admin@testorg2.com (ADMIN)');
+    console.log('   - manager@testorg2.com (MANAGER)');
+    console.log('   - employee1@testorg2.com (EMPLOYEE)');
+    console.log('   - employee2@testorg2.com (EMPLOYEE)');
 
     console.log('\n' + '='.repeat(60));
     console.log('✨ You can now start the server and login with any user above');

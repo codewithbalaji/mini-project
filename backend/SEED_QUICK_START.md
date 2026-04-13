@@ -11,26 +11,26 @@ npm run seed
 
 All users have password: `password123`
 
-### TechCorp Solutions (Software Company)
+### TestOrg (Software Company)
 
 | Email | Role | Department |
 |-------|------|------------|
-| alice@techcorp.com | ADMIN | Engineering |
-| bob@techcorp.com | MANAGER | Engineering |
-| carol@techcorp.com | MANAGER | Product Management |
-| david@techcorp.com | EMPLOYEE | Engineering |
-| emma@techcorp.com | EMPLOYEE | Engineering |
-| frank@techcorp.com | EMPLOYEE | Design |
-| grace@techcorp.com | VIEWER | Marketing |
+| admin@testorg.com | ADMIN | Engineering |
+| manager1@testorg.com | MANAGER | Engineering |
+| manager2@testorg.com | MANAGER | Product Management |
+| employee1@testorg.com | EMPLOYEE | Engineering |
+| employee2@testorg.com | EMPLOYEE | Engineering |
+| employee3@testorg.com | EMPLOYEE | Design |
+| viewer@testorg.com | VIEWER | Marketing |
 
-### DesignHub Agency (Creative Services)
+### TestOrg2 (Creative Services)
 
 | Email | Role | Department |
 |-------|------|------------|
-| helen@designhub.com | ADMIN | Creative |
-| ian@designhub.com | MANAGER | Creative |
-| julia@designhub.com | EMPLOYEE | Creative |
-| kevin@designhub.com | EMPLOYEE | Creative |
+| admin@testorg2.com | ADMIN | Creative |
+| manager@testorg2.com | MANAGER | Creative |
+| employee1@testorg2.com | EMPLOYEE | Creative |
+| employee2@testorg2.com | EMPLOYEE | Creative |
 
 ## What You Get
 
@@ -47,14 +47,14 @@ All users have password: `password123`
 ## Testing Scenarios
 
 ### Test Multi-tenancy
-- Login as alice@techcorp.com - should only see TechCorp data
-- Login as helen@designhub.com - should only see DesignHub data
+- Login as admin@testorg.com - should only see TestOrg data
+- Login as admin@testorg2.com - should only see TestOrg2 data
 
 ### Test Role-Based Access
-- **ADMIN** (alice, helen): Full access to all features
-- **MANAGER** (bob, carol, ian): Can create projects, assign tasks
-- **EMPLOYEE** (david, emma, frank, julia, kevin): Can work on assigned tasks
-- **VIEWER** (grace): Read-only access
+- **ADMIN** (admin@testorg.com, admin@testorg2.com): Full access to all features
+- **MANAGER** (manager1, manager2@testorg.com, manager@testorg2.com): Can create projects, assign tasks
+- **EMPLOYEE** (employee1/2/3@testorg.com, employee1/2@testorg2.com): Can work on assigned tasks
+- **VIEWER** (viewer@testorg.com): Read-only access
 
 ### Test Project Management
 - Active projects with ongoing tasks
